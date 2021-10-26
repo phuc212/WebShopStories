@@ -1,0 +1,138 @@
+﻿@model IEnumerable<DemoFIN3.Core.Models.Account>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<div class="card mb-4 mt-2">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <div class="text-uppercase">
+            <i class="fas fa-table me-1"></i>
+            Account
+        </div>
+        <div class="breadcrumb">
+            @Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-primary" })
+        </div>
+    </div>
+    <div class="card-body">
+        <table id="datatablesSimple">
+            <thead>
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.Email)</th>
+                    <th>@Html.DisplayNameFor(model => model.Name)</th>
+                    <th>@Html.DisplayNameFor(model => model.Phone)</th>
+                    <th>@Html.DisplayNameFor(model => model.Gender)</th>
+                    <th>@Html.DisplayNameFor(model => model.Address)</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Email)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Phone)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Gender)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Address)
+                        </td>
+                        <td class="col-3">
+                            @Html.ActionLink("Edit", "Edit", new { id = item.Id }, new { @class = "btn btn-success" })
+                            @Html.ActionLink("Details", "Details", new { id = item.Id }, new { @class = "btn btn-secondary" })
+                            <button class="btn btn-danger btn-delete" onclick="deleteFunc(this)" data-name="@item.Name" data-id="@item.Id">Delete</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you want to delete this account?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="closeFunc()">Close</button>
+                <button type="button" class="btn btn-danger" id="btn-delete-modal">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script type="text/javascript">
+        var showToast = (type = "success", message = "Delete success!") => {
+            toastr.options = {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": true,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": true,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "5000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            };
+            toastr[type](message);
+        }
+
+        function closeFunc() {
+            $('#exampleModalCenter').modal('hide');
+        }
+
+        function deleteFunc(e) {
+            let id = e.getAttribute('data-id');
+            let name = e.getAttribute('data-name');
+            $('#btn-delete-modal').data('id', id);
+            $('#exampleModalCenter').modal('show');
+            $('#exampleModalLongTitle').text(name);
+        }
+
+        $(document).ready(function () {
+            $('#btn-delete-modal').on('click', function () {
+                let id = $(this).data('id');
+                jQuery.ajax({
+                    url: 'AccountsAdmin/Delete',
+                    method: 'Post',
+                    data: { id },
+                    success: function (res) {
+                        $('#exampleModalCenter').modal('hide');
+                        showToast("success", res.Message);
+                        setTimeout(function () {
+                        window.location.href = "@Url.Action("Index", "AccountsAdmin")";
+                        }, 2000);
+                    },
+                    error: function (j, e) {
+                        showToast("error", "The system is maintenance!");
+                    },
+                })
+            })
+
+        })
+    </script>
+}

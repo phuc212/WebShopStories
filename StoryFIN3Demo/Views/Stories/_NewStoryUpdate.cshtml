@@ -1,0 +1,30 @@
+﻿@model IEnumerable<DemoFIN3.Core.Models.Story>
+
+<div class="row ml-3">
+    <table class="table table-light table-sm">
+        @foreach (var item in Model)
+        {
+        <tr>
+            <td>@Html.ActionLink(item.Title, "Details", new { year = item.PostedOn.Year, month = item.PostedOn.Month.ToString("00"), title = item.UrlSlug, id = item.Id }, new { @class = "nav-link text-success" })</td>
+            <td>@Html.DisplayFor(modelItem => item.Author.Name)</td>
+            <td>@Html.DisplayFor(modelItem => item.Category.Name)</td>
+            @if ((DateTime.Now - item.UpdatedOn).TotalSeconds < 60)
+            {
+                <td>@Convert.ToInt32((DateTime.Now - item.UpdatedOn).TotalSeconds) second(s) ago</td>
+            }
+            else if ((DateTime.Now - item.UpdatedOn).TotalMinutes < 60)
+            {
+                <td>@Convert.ToInt32((DateTime.Now - item.UpdatedOn).TotalMinutes) minute(s) ago</td>
+            }
+            else if ((DateTime.Now - item.UpdatedOn).TotalHours < 24)
+            {
+                <td>@Convert.ToInt32((DateTime.Now - item.UpdatedOn).TotalHours) hour(s) ago</td>
+            }
+            else
+            {
+                <td>@Convert.ToInt32((DateTime.Now - item.UpdatedOn).TotalDays) day(s) ago</td>
+            }
+        </tr>
+        }
+    </table>
+</div>

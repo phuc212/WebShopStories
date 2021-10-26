@@ -1,0 +1,66 @@
+﻿@model DemoFIN3.Core.Models.Comment
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Comment</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Story.Title)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Story.Title)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.AccountId)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AccountId)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CommentHeader)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CommentHeader)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CommentText)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CommentText)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CommentStatus)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CommentStatus)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CommentTime)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CommentTime)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

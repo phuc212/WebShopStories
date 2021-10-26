@@ -1,0 +1,42 @@
+﻿@model DemoFIN3.Core.Models.Account
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<div>
+    <div class="row">
+        <p class="card-header col h3">@Html.DisplayFor(model => model.Name) <i class="fas fa-chevron-right"></i> Details</p>
+    </div>
+    <hr />
+    <div class="row text-center d-flex justify-content-center">
+        <p class="h4 text-uppercase">Your account</p>
+    </div>
+    <hr />
+    <div class="row mb-5">
+        <div class="col-sm-3">
+            <img src="https://cdn.icon-icons.com/icons2/1378/PNG/512/avatardefault_92824.png" class="img-thumbnail" />
+        </div>
+        <div class="col-sm-9">
+            <div class="h4 card-title text-uppercase">
+                @Html.DisplayFor(modelItem => modelItem.Name)
+            </div>
+            <div class="card-text card-header" style="text-align:justify; min-height: 215px">
+                <span class="text-success">Phone number</span>: @Html.DisplayFor(modelItem => modelItem.Phone) <br />
+                <span class="text-success">Email</span>: @Html.DisplayFor(modelItem => modelItem.Email)<br />
+                <span class="text-success">Address</span>: @Html.DisplayFor(modelItem => modelItem.Address) <br />
+                <span class="text-success">Gender</span>: @Html.DisplayFor(modelItem => modelItem.Gender) <br />
+                @Html.DisplayFor(modelItem => modelItem.ShortDescription)
+            </div>
+        </div>
+    </div>
+    <hr />
+    <div class="form-inline d-flex justify-content-sm-end">
+        <div>
+            @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-secondary" })
+        </div>
+        <div class="ml-2">
+            @Html.ActionLink("Edit", "Edit", new { id = Model.Id }, new { @class = "btn btn-success" })
+        </div>
+    </div>
+</div>

@@ -1,0 +1,194 @@
+﻿@model IEnumerable<DemoFIN3.Core.Models.Comment>
+
+@{
+    ViewBag.Title = "Approved";
+}
+
+<div class="card mb-4 mt-2">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <div class="text-uppercase">
+            <i class="fas fa-table me-1"></i>
+            Comment
+        </div>
+        <div class="breadcrumb">
+        </div>
+    </div>
+    <div class="card-body">
+        <table id="datatablesSimple">
+            <thead>
+                <tr>
+                    <th>@Html.DisplayNameFor(model => model.Account.Name)</th>
+                    <th>@Html.DisplayNameFor(model => model.Story.Title)</th>
+                    <th>Content</th>
+                    <th>@Html.DisplayNameFor(model => model.CommentTime)</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Account.Name)
+                        </td>
+                        <td class="col-2">
+                            @Html.DisplayFor(modelItem => item.Story.Title)
+                        </td>
+                        <td class="cmtWrap">
+                            @Html.DisplayFor(modelItem => item.CommentHeader)
+                        </td>
+                        <td class="cmtWrap">
+                            @Html.DisplayFor(modelItem => item.CommentText)
+                        </td>
+                        <td class="col-2">
+                            @Html.DisplayFor(modelItem => item.CommentTime)
+                        </td>
+                        <td class="col-2">
+                            <button class="btn btn-secondary btn-details" onclick="detailsFunc(this)" data-name="@item.CommentHeader" data-content="@item.CommentText" data-id="@item.Id" data-star="@item.Rating" data-time="@item.CommentTime">Details</button>
+                            <button class="btn btn-danger btn-delete" onclick="deleteFunc(this)" data-name="@item.CommentHeader" data-id="@item.Id">Deny</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you want to deny this comment?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="closeFunc(this)">Close</button>
+                <button type="button" class="btn btn-danger" id="btn-delete-modal">Deny</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Details -->
+<div class="modal fade" id="exampleModalCenterDetails" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="d-flex flex-column card comment-section">
+                <div class="bg-white p-2">
+                    <div class="d-flex justify-content-between">
+                        <div class="d-flex flex-row user-info">
+                            <img class="rounded-circle" src="https://i.imgur.com/hczKIze.jpg" width="40">
+                            <div class="d-flex flex-column justify-content-start ml-2">
+                                <span class="d-block font-weight-bold name">User name</span>
+                                <span class="date text-black-50 cmtTime"></span>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-row user-info">
+                            <span class="cmtStar"></span> <i class="fas fa-star text-warning"></i>
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <p class="comment-text cmtHeader"></p>
+                        <p class="comment-text cmtContent"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="closeFunc(this)">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .cmtWrap {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: normal;
+        -webkit-line-clamp: 1;
+        line-height: 1.7rem;
+        text-align: justify;
+    }
+</style>
+
+@section Scripts
+{
+    <script type="text/javascript">
+        var showToast = (type = "success", message = "Delete success!") => {
+            toastr.options = {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": true,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": true,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "5000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            };
+            toastr[type](message);
+        }
+
+        function closeFunc(e) {
+            $('#exampleModalCenter').modal('hide');
+            $('#exampleModalCenterDetails').modal('hide');
+        }
+
+        function deleteFunc(e) {
+            let id = e.getAttribute('data-id');
+            let name = e.getAttribute('data-name');
+            $('#btn-delete-modal').data('id', id);
+            $('#exampleModalCenter').modal('show');
+            $('#exampleModalLongTitle').text(name);
+        }
+
+        function detailsFunc(e) {
+            let name = e.getAttribute('data-name');
+            let star = e.getAttribute('data-star');
+            let cmtContent = e.getAttribute('data-content');
+            let time = e.getAttribute('data-time');
+            $('#exampleModalCenterDetails').modal('show');
+            $('.cmtHeader').text(name);
+            $('.cmtContent').text(cmtContent);
+            $('.cmtTime').text(time);
+            $('.cmtStar').text(star);
+        }
+
+        $(document).ready(function () {
+            $('#btn-delete-modal').on('click', function () {
+                let id = $(this).data('id');
+                jQuery.ajax({
+                    url: '/Admin/CommentsAdmin/DeniedF',
+                    method: 'Post',
+                    data: { id },
+                    success: function (res) {
+                        $('#exampleModalCenter').modal('hide');
+                        showToast("success", res.Message);
+                        setTimeout(function () {
+                        window.location.href = "@Url.Action("Index", "CommentsAdmin")";
+                        }, 3000);
+                    },
+                    error : function (j, e) {
+                        showToast("error", "The system is maintenance. Please retry later!");
+                    },
+                })
+            })
+        })
+    </script>
+
+}

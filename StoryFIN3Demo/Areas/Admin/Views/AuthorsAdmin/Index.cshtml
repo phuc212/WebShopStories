@@ -1,0 +1,518 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+<div class="card-header d-flex justify-content-between align-items-center">
+    <div class="text-uppercase">
+        <i class="fas fa-table me-1"></i>
+        Author
+    </div>
+    <div class="breadcrumb">
+        <a href="AuthorsAdmin/Create" class="btn text-primary"><i class="far fa-plus-square"></i></a>
+        @*@Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-primary" })*@
+    </div>
+</div>
+<div class="row my-4">
+    <!-- Small table -->
+    <div class="col-md-12 col-sm-12">
+        <div class="card shadow">
+            <div class="card-body" style="min-height: 475px">
+                <div class="row">
+                    <div class="col-sm-12 col-md-1">
+                        <button type="button" class="btn mr-2 text-danger" id="btnShowDelAllModal"><i class="fas fa-trash"></i></button>
+                    </div>
+                    <div class="col-sm-12 col-md-5 ">
+                        <div class="row">
+                            <div class="form-group col-auto d-inline-flex">
+                                <div style="display:flex; align-items:center; margin-right:5px;">
+                                    <p style="margin:0;">Show</p>
+                                </div>
+                                <div>
+                                    <select class="form-control" id="customSelect">
+                                        <option value="5">5</option>
+                                        <option value="10">10</option>
+                                        <option value="15">15</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group col-auto d-inline-flex">
+                                <div class="">
+                                    <label for="search" class="sr-only">Search</label>
+                                    <input type="text" class="form-control" id="inputSearch" value="" placeholder="Search...">
+                                </div>
+                                <div class="">
+                                    <a class="btn btn-light" id="btnSearch">
+                                        <i class="fab fa-searchengin"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6" style="display:flex;justify-content:end">
+                        <div class="row d-inline-flex">
+                            <div id="recordsDes" class="col-auto pt-2">
+
+                            </div>
+                            <div class="col-auto">
+                                <nav aria-label="Page navigation example">
+                                    <ul class="pagination" id="pagination">
+                                    </ul>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- table -->
+                <table class="table table-hover table-bordered">
+                    <thead class="thead-light">
+                        <tr>
+                            <th style="width:10px">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="checkBoxAll">
+                                    <label class="custom-control-label" for="checkBoxAll"></label>
+                                </div>
+                            </th>
+                            <th style='text-align:center; width: 150px' id="thName">
+                                <a id="sortName">Author Name <i class="fas fa-long-arrow-alt-up text-light"></i><i class="fas fa-long-arrow-alt-down text-light"></i></a>
+                            </th>
+                            <th style='text-align:center'>
+                                <a>Descripton</a>
+                            </th>
+                            <th style='text-align:center; width: 40px'>
+                                Action
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody id="showData">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div> <!-- simple table -->
+</div> <!-- end section -->
+<!-- Modal Delete -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you want to delete this author?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="closeFunc()">Close</button>
+                <button type="button" class="btn btn-danger" id="btn-delete-modal">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Confirm -->
+<div class="modal fade" id="exampleModalCenterConfirm" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="closeFunc()">Close</button>
+                <button type="button" class="btn btn-primary" id="btn-reload-modal">Reload</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Modal confirm delete All-->
+<div class="modal fade" id="deleteAllModal" tabindex="-1" role="dialog" aria-labelledby="varyModalLabel" aria-hidden="true">
+    <div class="modal-dialog " role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="varyModalLabel">Delete Confirm</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="Id" value="0" />
+                <p>Are you sure delete all records selected ?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn mb-2 btn-secondary" data-dismiss="modal" onclick="closeFunc()">Cancel</button>
+                <button type="button" class="btn mb-2 btn-danger" id="btnDeleteAll">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--End confirm delete-->
+
+<style>
+    .category-des {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: normal;
+        -webkit-line-clamp: 2;
+        line-height: 1.5rem;
+        text-align: justify;
+    }
+</style>
+
+@section scripts
+{
+    <script>
+        var search = '';
+        var pageSize = 5;
+        var page = 1;
+        var lastPage = 1;
+        var sortOrder = 'id';
+        $(document).ready(function () {
+            LoadCategories(search, pageSize, page, sortOrder);
+        });
+
+        // Dùng ajax để load danh sách :
+        function LoadCategories(search, pageSize, page, sortOrder) {
+            $.ajax({
+                url: '/Admin/AuthorsAdmin/GetAllAuthor',
+                type: 'GET',
+                data: {
+                    search: search,
+                    pageSize: parseInt(pageSize),
+                    page: parseInt(page),
+                    sortOrder: sortOrder
+                },
+                success: function (res) {
+                    if (res.code == 200) {
+                        if (res.Data.length <= 0) {
+                            $('#showData').empty();
+                            $('#showData').append(
+                                "<tr>" +
+                                "<td colspan='6' style='text-align:center'>No data available in table</td>"
+                                + "<tr>"
+                            );
+                        }
+                        else {
+                            $('#showData').empty();
+                            $.each(res.Data, function (i, v) {
+                                $('#showData').append(
+                                    "<tr>" +
+                                    "<td style='width:10px'>" +
+                                    '<div class="custom-control custom-checkbox">' +
+                                    '<input type="checkbox" name="tableRecords" class="custom-control-input checkBoxId" id="' + v.Id + '" value="' + v.Id + '">' +
+                                    '<label class="custom-control-label" for="' + v.Id + '"></label>' +
+                                    '</div>' +
+                                    "</td>" +
+                                    "<td style='text-align:center'>" + v.AuthorName + "</td>" +
+                                    "<td style='text-align:justify'>" +
+                                    '<div class="category-des">' + v.Description +
+                                    '</div>' +
+                                    "</td>" +
+                                    "<td style='text-align:center'>" +
+                                    '<div class="d-flex justify-content-between">' +
+                                    '<a class="btn text-success btnEdit" data-id="' + v.Id + '" id="' + v.Id + '"><i class="fas fa-edit"></i></a>' +
+                                    '<a class="btn text-secondary mr-1 ml-1 btnDetail" data-id="' + v.Id + '" id="' + v.Id + '"><i class="fas fa-info-circle"></i></a>' +
+                                    '<a onclick="deleteFunc(this)" class="btn text-danger btnDelModal" data-name="' + v.AuthorName + '" data-id="' + v.Id + '" id="' + v.Id + '"><i class="fas fa-trash"></i></a>' +
+                                    '</div>' +
+                                    "</td>" +
+                                    "<tr>"
+                                );
+                            })
+                        }
+                    }
+                    if (res.totalRecords > res.pageSize) {
+                        $('#pagination').empty();
+                        var li = '<li class="page-item" id="first">' +
+                                    '<a class="page-link" aria-label="First" >' +
+                                        '<i class="fas fa-chevron-left"></i>' +
+                                        '<i class="fas fa-chevron-left"></i>' +
+                                    '</a>' +
+                                '</li >' +
+                                '<li class="page-item" id="previous">' +
+                                    '<a class="page-link" aria-label="Previous">' +
+                                        '<i class="fas fa-chevron-left"></i>' +
+                                    ' </a>' +
+                                '</li>';
+                        for (var i = 0; i < res.countPage; i++) {
+                            li += '<li class="page-item page" id="'+(i+1)+'"><a class="page-link" >' + (i + 1) + '</a></li>';
+                        }
+                        li += '<li class="page-item" id="next">' +
+                                    '<a class="page-link" aria-label="Next" >' +
+                                        '<i class="fas fa-chevron-right"></i>' +
+                                    '</a>' +
+                                '</li>' +
+                                '<li class="page-item" id="last">' +
+                                    '<a class="page-link" aria-label="Last">' +
+                                        '<i class="fas fa-chevron-right"></i>' +
+                                        '<i class="fas fa-chevron-right"></i>' +
+                                    '</a>' +
+                                '</li>';
+                        $('#pagination').append(li);
+                        $('#recordsDes').empty();
+                        var recordDes = 'Showing ' + ((res.pageIndex * res.pageSize) - (res.pageSize - 1)) + ' - ' + res.pageIndex * res.pageSize + ' of ' + res.totalRecords + ' items';
+                        $('#recordsDes').append(recordDes);
+                        $('li#' + res.pageIndex).addClass('active');
+                        if (res.pageIndex == 1) {
+                            $('li#previous').addClass('disabled');
+                            $('li#first').addClass('disabled');
+                        }
+                        if (res.pageIndex == res.countPage) {
+                            $('li#next').addClass('disabled');
+                            $('li#last').addClass('disabled');
+                        }
+                        lastPage = res.countPage;
+                    }
+                    else {
+                        $('#pagination').empty();
+                        $('#recordsDes').empty();
+                    }
+                }
+            });
+        };
+        // Toast thông báo message
+        var showToast = (type = "success", message = "Test") => {
+            toastr.options = {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": true,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": true,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            };
+            toastr[type](message);
+        }
+
+        function closeFunc() {
+            $('#exampleModalCenter').modal('hide');
+            $('#exampleModalCenterDetails').modal('hide');
+            $('#deleteAllModal').modal('hide');
+            $('#exampleModalCenterConfirm').modal('hide');
+        }
+
+        function deleteFunc(e) {
+            let id = e.getAttribute('data-id');
+            let name = e.getAttribute('data-name');
+            $('#btn-delete-modal').data('id', id);
+            $('#exampleModalCenter').modal('show');
+            $('#exampleModalLongTitle').text(name);
+        }
+
+        $(document).on('click', '.btnEdit', function (e) {
+            let id = $(this).data('id');
+            jQuery.ajax({
+                url: "@Url.Action("CheckExist", "AuthorsAdmin")",
+                type: "Get",
+                data: { id },
+                success: function (res) {
+                    if (res.status) {
+                        window.location.href = "/Admin/AuthorsAdmin/Edit/" + id;
+                    }
+                    else {
+                        $('#exampleModalCenterConfirm').modal('show');
+                        $('.modal-body').text("Data has been changed. Do you want to reload page?");
+                    }
+                }
+            })
+        })
+
+        $(document).on('click', '.btnDetail', function (e) {
+            let id = $(this).data('id');
+            jQuery.ajax({
+                url: "@Url.Action("CheckExist", "AuthorsAdmin")",
+                type: "Get",
+                data: { id },
+                success: function (res) {
+                    if (res.status) {
+                        window.location.href = "/Admin/AuthorsAdmin/Details/" + id;
+                    }
+                    else {
+                        $('#exampleModalCenterConfirm').modal('show');
+                        $('.modal-body').text("Data has been changed. Do you want to reload page?");
+                    }
+                }
+            })
+        })
+
+        $('#btn-delete-modal').on('click', function () {
+            let id = $(this).data('id');
+            jQuery.ajax({
+                url: '/Admin/AuthorsAdmin/Delete',
+                method: 'Post',
+                data: { id },
+                success: function (res) {
+                    $('#exampleModalCenter').modal('hide');
+                    if (res.code === 1) {
+                        showToast("warning", res.Message);
+                    }
+                    else if (res.code === 500) {
+                        $('#exampleModalCenterConfirm').modal('show');
+                        $('.modal-body').text("Data has been changed. Do you want to reload page?");
+                    }
+                    else {
+                        $('#exampleModalCenter').modal('hide');
+                        showToast("success", res.Message);
+                        LoadCategories(search, pageSize, page, sortOrder);
+                    }
+                },
+                error: function (j, e) {
+                    showToast("error", "The system is maintenance!");
+                },
+            })
+        })
+
+        $('#btn-reload-modal').on('click', function () {
+            window.location.href = "@Url.Action("Index", "AuthorsAdmin")";
+        })
+
+        $('#btnShowDelAllModal').click(function () {
+            $('#deleteAllModal').modal('show');
+        });
+
+        $('#btnDeleteAll').click(function (e) {
+            var data = [];
+            $("input[name='tableRecords']:checked").each(function () {
+                data.push(parseInt($(this).val()));
+            });
+            $.ajax({
+                url: '/Admin/AuthorsAdmin/DeleteDataSelected',
+                type: 'POST',
+                data: { ids: data },
+                success: function (res) {
+
+                    if (res.code == 200) {
+                        showToast("success", res.message);
+                        $('#deleteAllModal').modal('hide');
+                        $('#checkBoxAll').prop('checked', false);
+                        LoadCategories(search, pageSize, page, sortOrder);
+                    } else {
+                        showToast("error", res.message);
+                        $('#deleteAllModal').modal('hide');
+                        $('#checkBoxAll').prop('checked', false);
+                        LoadCategories(search, pageSize, page, sortOrder);
+                    }
+                }
+            })
+        })
+
+        $('#checkBoxAll').click(function () {
+            if ($(this).is(":checked")) {
+                $('.checkBoxId').prop('checked', true);
+            } else {
+                $('.checkBoxId').prop('checked', false);
+            };
+        });
+        $('#btnSearch').click(function () {
+            search = $('#inputSearch').val();
+            LoadCategories(search, pageSize, page, sortOrder);
+        });
+        $('#inputSearch').focus(function () {
+            $('#inputSearch').val('');
+            search = '';
+            LoadCategories(search, pageSize, page, sortOrder);
+        });
+        $('#customSelect').change(function () {
+            pageSize = parseInt($('#customSelect').val());
+            page = 1;
+            LoadCategories(search, pageSize, page, sortOrder);
+        });
+        $('#pagination').on('click', "li.page", function () {
+            search = $('#inputSearch').val();
+            page = parseInt($(this).text());
+            pageSize = parseInt($('#customSelect').val());
+            LoadCategories(search, pageSize, page, sortOrder);
+        });
+        $('#pagination').on('click', "li#previous", function () {
+            search = $('#inputSearch').val();
+            if ($('li#previous').hasClass('disabled')) {
+                page = page;
+            } else {
+                page = page - 1;
+            }
+            pageSize = parseInt($('#customSelect').val());
+            LoadCategories(search, pageSize, page, sortOrder);
+        });
+
+        $('#pagination').on('click', "li#first", function () {
+            search = $('#inputSearch').val();
+            if ($('li#first').hasClass('disabled')) {
+                page = page;
+            } else {
+                page = 1;
+            }
+            pageSize = parseInt($('#customSelect').val());
+            LoadCategories(search, pageSize, page, sortOrder);
+        });
+
+        $('#pagination').on('click', "li#next", function () {
+            search = $('#inputSearch').val();
+            if ($('li#next').hasClass('disabled')) {
+                page = page;
+            } else {
+                page = page + 1;
+            }
+            pageSize = parseInt($('#customSelect').val());
+            LoadCategories(search, pageSize, page, sortOrder);
+        });
+
+        $('#pagination').on('click', "li#last", function () {
+            search = $('#inputSearch').val();
+            if ($('li#last').hasClass('disabled')) {
+                page = page;
+            } else {
+                page = lastPage;
+            }
+            pageSize = parseInt($('#customSelect').val());
+            LoadCategories(search, pageSize, page, sortOrder);
+        });
+
+        $('#thId').on('click', "a#sortId", function () {
+            if ($('a#sortId').hasClass('id')) {
+                $('a#sortId').removeClass('id').addClass('id_desc');
+                sortOrder = 'id_desc';
+                LoadCategories(search, pageSize, page, sortOrder);
+            } else if ($('a#sortId').hasClass('id_desc')) {
+                $('a#sortId').removeClass('id_desc').addClass('id');
+                sortOrder = 'id';
+                LoadCategories(search, pageSize, page, sortOrder);
+            } else {
+                $('a#sortId').addClass('id');
+                LoadCategories(search, pageSize, page, sortOrder);
+            }
+        });
+
+        $('#thName').on('click', "a#sortName", function () {
+            if ($('a#sortName').hasClass('name')) {
+                $('a#sortName').removeClass('name').addClass('name_desc');
+                $('.fa-long-arrow-alt-up').removeClass('text-light');
+                $('.fa-long-arrow-alt-down').addClass('text-light');
+                sortOrder = 'name_desc';
+                LoadCategories(search, pageSize, page, sortOrder);
+            } else if ($('a#sortName').hasClass('name_desc')) {
+                $('a#sortName').removeClass('name_desc').addClass('name');
+                $('.fa-long-arrow-alt-down').removeClass('text-light');
+                $('.fa-long-arrow-alt-up').addClass('text-light');
+                sortOrder = 'name';
+                LoadCategories(search, pageSize, page, sortOrder);
+            } else {
+                $('a#sortName').addClass('name');
+                $('.fa-long-arrow-alt-down').removeClass('text-light');
+                sortOrder = 'name';
+                LoadCategories(search, pageSize, page, sortOrder);
+            }
+        });
+    </script>
+}
+
+

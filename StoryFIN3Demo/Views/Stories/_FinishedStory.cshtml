@@ -1,0 +1,99 @@
+﻿@model IEnumerable<DemoFIN3.Core.Models.Story>
+
+<div class="row bg-light">
+    @*<div class="col-2">
+        <div class="row story-img">
+            <img src="@Model.First().ImageUrl" class="img-thumbnail" style="width: 100%; height: 18rem" alt="...">
+            @if (Model.First().StoryStatus == DemoFIN3.Core.Enum.StoryStatus.Full)
+            {
+                <span class="story-status">@Model.First().StoryStatus</span>
+            }
+        </div>
+        <div class="row card-title h5 mt-2 story-title">
+            @Html.ActionLink(Model.First().Title, "Details", new { year = @Model.First().PostedOn.Year, month = @Model.First().PostedOn.Month.ToString("00"), title = @Model.First().UrlSlug, id = @Model.First().Id }, new { @class = "nav-link text-dark" })
+        </div>
+        <div class="text-success" style="text-align: center; -webkit-box-orient: vertical;">
+            @Html.DisplayFor(modelItem => @Model.First().Author.Name)
+        </div>
+        <div class="row short-des">
+            @Html.Raw(@Model.First().ShortDescription)
+        </div>
+    </div>*@
+    @*<div class="col-10 row-cus">*@
+        @foreach (var item in Model)
+        {
+            <div class="col-sm-4">
+                <div class="row-cus">
+                    <div class="col-5 story-img">
+                        <img src="@Html.DisplayFor(modelItem => item.ImageUrl)" class="img-thumbnail" style="width: 100%; height: 8rem" alt="...">
+                        @if (item.StoryStatus == DemoFIN3.Core.Enum.StoryStatus.Full)
+                        {
+                            <span class="story-status-full">@Html.DisplayFor(modelItem => item.StoryStatus)</span>
+                        }
+                    </div>
+                    <div class="col-7">
+                        <div class="row h5">
+                            @Html.ActionLink(item.Title, "Details", new { year = @Model.First().PostedOn.Year, month = @Model.First().PostedOn.Month.ToString("00"), title = @Model.First().UrlSlug, id = @Model.First().Id }, new { @class = "text-dark story-title" })
+                        </div>
+                        <div class="row text-success">
+                            @Html.DisplayFor(modelItem => item.Author.Name)
+                        </div>
+                        <div class="row short-des">
+                            @Html.Raw(item.ShortDescription)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    @*</div>*@
+</div>
+
+<style>
+    .story-status-full {
+        position: absolute;
+        top: 5px;
+        right: 20px;
+        height: 20px;
+        padding: 0px 2px 0px 2px;
+        text-align: center;
+        color: #fff;
+        border-radius: 0 0px 0px 5px;
+        background: #28a745;
+        font-size: 12px;
+    }
+
+    .story-img {
+        position: relative;
+    }
+
+    .short-des {
+        -webkit-line-clamp: 2;
+        white-space: normal;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        line-height: 1.6rem;
+        text-align: justify;
+    }
+
+    .story-title {
+        -webkit-line-clamp: 2;
+        white-space: normal;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        line-height: 1.6rem;
+        text-decoration: none;
+    }
+
+    .story-title:hover {
+        text-decoration: none;
+    }
+
+    .row-cus {
+        display: flex;
+        flex-wrap: wrap;
+    }
+</style>

@@ -1,0 +1,32 @@
+﻿@using Microsoft.AspNet.Identity
+@if (Request.IsAuthenticated)
+{
+    <li class="nav-item dropdown ml-1">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-user"></i>
+        </a>
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+            @Html.ActionLink(User.Identity.GetUserName() + "!", "UserInfo", "Authenticate", new { area = "" }, htmlAttributes: new { title = "Manage", @class = "nav-link text-dark" })
+            @using (Html.BeginForm("LogOff", "Authenticate", FormMethod.Post, new { id = "logoutForm", @class = "nav-item text-dark" }))
+            {
+                @Html.AntiForgeryToken()
+
+                <a href="javascript:document.getElementById('logoutForm').submit()" class="nav-link text-dark">Log off</a>
+
+            }
+        </div>
+    </li>
+}
+else
+{
+    <li class="nav-item dropdown ml-1">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-user"></i>
+        </a>
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
+            @Html.ActionLink("Register", "Register", "Authenticate", new { area = "" }, htmlAttributes: new { id = "registerLink", @class = "nav-link text-dark" })
+            @Html.ActionLink("Log in", "Login", "Authenticate", new { area = "" }, htmlAttributes: new { id = "loginLink", @class = "nav-link text-dark" })
+        </div>
+    </li>
+}
+

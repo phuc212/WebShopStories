@@ -1,0 +1,34 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+@Html.Partial("~/Views/Shared/_Carousel.cshtml")
+
+<div class="container body-content" style="min-height: 100vh">
+    <div class="mb-5" style="min-height: 80vh; margin-top: 40px">
+        <div class="row d-flex justify-content-space-between">
+            <div class="col h4 text-uppercase"><i class="fas fa-fire text-danger"></i> Hot story <i class="fas fa-chevron-right" style="font-size: 24px; font-weight: 600"></i></div>
+        </div>
+        <hr />
+        @Html.Action("HotStory", "Stories")
+    </div>
+    <hr />
+    <div class="row mb-5">
+        <div class="col-sm-3 card-header bg-light" style="border-right: 10px double #28a745; border-radius: 28px;">
+            @Html.Partial("~/Views/Shared/_Category.cshtml")
+        </div>
+        <div class="col-sm-9">
+            <div class="row d-flex justify-content-space-between ml-1">
+                <div class="col h4 text-uppercase"><i class="fab fa-bitcoin text-warning"></i> New story Update <i class="fas fa-chevron-right" style="font-size: 24px; font-weight: 600"></i></div>
+            </div>
+            <hr />
+            @Html.Action("NewStoryUpdate", "Stories")
+        </div>
+    </div>
+    <hr />
+    <div class="row d-flex justify-content-space-between">
+        <div class="col h4 text-uppercase"><i class="fas fa-expand-arrows-alt"></i> Finished story <i class="fas fa-chevron-right" style="font-size: 24px; font-weight: 600"></i></div>
+    </div>
+    <hr />
+    @Html.Action("FinishedStory", "Stories")
+</div>

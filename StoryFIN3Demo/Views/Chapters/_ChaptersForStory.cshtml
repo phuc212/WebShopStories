@@ -1,0 +1,20 @@
+﻿@model PagedList.IPagedList<DemoFIN3.Core.Models.Chapter>
+
+@using PagedList.Mvc;
+
+<div class="table-striped mr-0" style="min-height: 200px; overflow:scroll; overflow-x: hidden;">
+    @foreach (var item in Model.OrderBy(s => s.ChapterNumber))
+    {
+        <div class="align-items-center row pl-4 mb-1" style="border: 1px solid #888; border-radius: 2px">
+            <div class="col-2 h6"><span>Chapter</span> @Html.DisplayFor(modelItem => item.ChapterNumber)</div>
+            <div class="col-10 chapter-header">@Html.ActionLink(item.ChapterHeader, "Details", "Chapters", new { id = item.Id }, new { @class = "nav-link text-dark" })</div>
+        </div>
+    }
+</div>
+<div class="card-footer">
+    Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+    @Html.PagedListPager(Model, page => Url.Action(ViewBag.UrlPage, "Stories", new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+</div>
+
+
+

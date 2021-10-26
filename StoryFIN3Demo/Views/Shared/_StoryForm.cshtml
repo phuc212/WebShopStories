@@ -1,0 +1,47 @@
+﻿@model IEnumerable<DemoFIN3.Core.Models.Story>
+
+@foreach (var item in Model)
+{
+    <div class="col-sm-3 mb-3">
+        <div class="mr-3 ml-3">
+            <div class="row story-img">
+                <img src="@Html.DisplayFor(modelItem => item.ImageUrl)" class="img-thumbnail" style="width: 100%; height: 18rem" alt="...">
+                @if (item.StoryStatus == DemoFIN3.Core.Enum.StoryStatus.Full)
+                {
+                    <span class="story-status">@Html.DisplayFor(modelItem => item.StoryStatus)</span>
+                }
+            </div>
+            <div class="row card-title h5 mt-2" style="
+                -webkit-line-clamp: 2;
+                white-space: normal;
+                text-overflow: ellipsis;
+                overflow: hidden;
+                display: -webkit-box;
+                -webkit-box-orient: vertical;
+                text-align: center;">
+                @Html.ActionLink(item.Title, "Details", new { year = item.PostedOn.Year, month = item.PostedOn.Month.ToString("00"), title = item.UrlSlug, id = item.Id }, new { @class = "nav-link text-dark" })
+            </div>
+            <div class="text-success" style="text-align: center; -webkit-box-orient: vertical;">
+                 @Html.DisplayFor(modelItem => item.Author.Name)
+            </div>
+        </div>
+    </div>
+}
+
+<style>
+    .story-status {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        height: 28px;
+        padding: 0px 3px 0 2px;
+        text-align: center;
+        color: #fff;
+        border-radius: 0 0px 0px 5px;
+        background: #28a745;
+    }
+
+    .story-img {
+        position: relative;
+    }
+</style>

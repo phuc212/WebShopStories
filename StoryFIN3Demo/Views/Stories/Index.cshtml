@@ -1,0 +1,25 @@
+﻿@model PagedList.IPagedList<DemoFIN3.Core.Models.Story>
+
+@using PagedList.Mvc;
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<div class="container body-content" style="min-height: 100vh; padding-top: 80px">
+    <div style="min-height: 80vh">
+        <div class="row h4">
+            <p class="card-header col"><i class="fab fa-searchengin"></i> Search for <i class="fas fa-chevron-right"></i> </p>
+        </div>
+        <hr />
+        <div class="row mb-3">
+            @Html.Partial("~/Views/Shared/_StoryForm.cshtml")
+        </div>
+    </div>
+    <div>
+        Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) of @Model.PageCount
+        @Html.PagedListPager(Model, page => Url.Action("Index", new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+    </div>
+</div>
+
+

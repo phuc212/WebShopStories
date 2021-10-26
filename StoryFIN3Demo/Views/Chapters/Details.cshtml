@@ -1,0 +1,66 @@
+﻿@model DemoFIN3.Core.Models.Chapter
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<div class="container body-content" style="min-height: 100vh; padding-top: 80px">
+    <div style="min-height: 80vh;">
+        <div class="row d-flex justify-content-between card-header ">
+            <p class="h5 row d-flex align-items-center">@Html.ActionLink(Model.Story.Title, "Details", "Stories", new { year = Model.Story.PostedOn.Year, month = Model.Story.PostedOn.Month.ToString("00"), title = Model.Story.UrlSlug, id = Model.StoryId }, new { @class = "nav-link text-dark" }) <i class="fas fa-chevron-right"></i>  Chapter @Html.DisplayFor(model => model.ChapterNumber)</p>
+            <div class="dropdown">
+                <button type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">
+                    List chapters
+                </button>
+                <div class="dropdown-menu">
+                    @foreach (var item in Model.Story.Chapters)
+                    {
+                        <div class="col">
+                            @Html.ActionLink(item.ChapterNumber.ToString(), "Details", "Chapters", new { id = item.Id }, new { @class = "nav-link dropdown-item text-dark" })
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <hr />
+        <div class="row mb-5 h2 text-center d-flex justify-content-center">
+            Chapter @Html.DisplayFor(model => model.ChapterNumber): @Html.DisplayFor(model => model.ChapterHeader)
+        </div>
+        <div class="row" style="line-height: 2; font-size: 22px; text-align: justify; margin: 1px;">
+            @Html.Raw(Model.ChapterContent)
+        </div>
+        <hr />
+        <div class="row mr-1">
+            <div id="accordion" class="col">
+                <div class="card mb-2">
+                    <div class="card-header" id="headingOne" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        <h5 class="mb-0 d-flex justify-content-center">
+                            List chapters
+                        </h5>
+                    </div>
+
+                    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                        @if (Model.Story.Chapters.Count <= 0)
+                        {
+                            <div class="row card-body d-flex justify-content-center">
+                                <span class="h4">List chapters are updating!</span>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="table-striped mr-0" style="height:200px; overflow:scroll; overflow-x: hidden;">
+                                @foreach (var item in Model.Story.Chapters)
+                                {
+                                    <div class="align-items-center row pl-4 mb-1" style="border: 1px solid #888; border-radius: 2px">
+                                        <div class="col-2 h6"><span>Chapter</span> @Html.DisplayFor(modelItem => item.ChapterNumber)</div>
+                                        <div class="col-10 chapter-header">@Html.ActionLink(item.ChapterHeader, "Details", "Chapters", new { id = item.Id }, new { @class = "nav-link text-dark" })</div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

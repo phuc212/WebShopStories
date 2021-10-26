@@ -1,0 +1,14 @@
+﻿@model IEnumerable<DemoFIN3.Core.Models.Author>
+
+
+<ul class="nav nav-pills flex-column">
+    @foreach (var item in Model)
+    {
+        <li class="nav-item">
+            @Html.ActionLink(item.Name, "StoriesByAuthor", "Stories", new { name = item.Name }, new { @class = "nav-link text-dark" })
+        </li>
+    }
+</ul>
+
+
+

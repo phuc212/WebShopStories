@@ -1,0 +1,39 @@
+﻿@model DemoFIN3.Core.Models.Comment
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<div class="container wrap-comment" style="margin-top: 50px;">
+    <div class="d-flex justify-content-center row">
+        <div class="col-md-8" style=" border: 1px solid #0094ff">
+            <div class="d-flex flex-column comment-section">
+                <div class="bg-white p-2">
+                    <div class="d-flex justify-content-between">
+                        <div class="d-flex flex-row user-info">
+                            <img class="rounded-circle" src="https://i.imgur.com/RpzrMR2.jpg" width="40">
+                            <div class="d-flex flex-column justify-content-start ml-2">
+                                <span class="d-block font-weight-bold name">@Html.DisplayFor(modelItem => Model.Account.Name)</span>
+                                <span class="date text-black-50">@Html.DisplayFor(modelItem => Model.CommentTime)</span>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-row user-info">
+                            @for (int i = 0; i < Model.Rating; i++)
+                            {
+                                <span class="fas fa-star text-warning"></span>
+                            }
+                            @for (int i = Model.Rating; i < 5; i++)
+                            {
+                                <span class="far fa-star"></span>
+                            }
+                        </div>
+                    </div>
+                    <div class="mt-2">
+                        <p class="comment-text">@Html.DisplayFor(modelItem => Model.CommentHeader)</p>
+                        <p class="comment-text">@Html.DisplayFor(modelItem => Model.CommentText)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

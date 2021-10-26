@@ -1,0 +1,262 @@
+﻿@model DemoFIN3.Core.Models.Story
+
+@{
+    ViewBag.Title = "Details";
+}
+
+
+<div class="container body-content" style="min-height: 100vh; padding-top: 80px">
+    <div style="min-height: 80vh;">
+        <input type="hidden" name="Url" value="@ViewBag.Url" />
+        <div class="row">
+            <p class="card-header col"><i class="fas fa-home"></i> Home <i class="fas fa-chevron-right"></i> @Html.DisplayFor(model => model.Title)</p>
+        </div>
+        <hr />
+        <div class="row mb-5">
+            <div class="col-sm-9">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <img src="../@Html.DisplayFor(model => model.ImageUrl)" class="img-thumbnail" style="height: 395px" />
+                    </div>
+                    <div class="col-sm-8">
+                        <div class="h4 card-title text-uppercase">
+                            @Html.DisplayFor(model => model.Title)
+                        </div>
+                        <div class="card-text">
+                            @Model.Rate <i class="fas fa-star text-warning"></i> | @Html.DisplayFor(model => model.ViewCount) <i class="fas fa-eye"></i> | @Model.Accounts.Count
+                            @if (ViewBag.UserInfo != null)
+                            {
+                                if (ViewBag.UserInfo.Stories.Contains(Model))
+                                {
+                                    @Html.ActionLink(" ", "UnFollow", new { storyId = Model.Id, Url = ViewBag.Url }, new { @class = "fas fa-minus-circle text-danger" })
+                                }
+                                else
+                                {
+                                    @Html.ActionLink(" ", "Follow", new { storyId = Model.Id, Url = ViewBag.Url }, new { @class = "fas fa-plus-circle text-success" })
+                                }
+                            }
+                            else
+                            {
+                                @Html.ActionLink(" ", "Follow", new { storyId = Model.Id, Url = ViewBag.Url }, new { @class = "fas fa-plus-circle text-success" })
+                            }
+                        </div>
+                        <div class="card-text card-header bg-light mt-4" style="border-radius: 28px; min-height: 305px">
+                            <div class="row">
+                                <div class="col">
+                                    <span class="text-success">Author</span>: @Html.DisplayFor(model => model.Author.Name)
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <span class="text-success">Category</span>: @Html.DisplayFor(model => model.Category.Name)
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <span class="text-success">Status</span>: @Html.DisplayFor(model => model.StoryStatus)
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <span class="text-success">Source</span>: @Html.DisplayFor(model => model.Source.Name)
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col story-description">
+                                    @Html.Raw(Model.ShortDescription)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr />
+                <div class="row mr-1">
+                    <div id="accordion" class="col">
+                        <div class="card mb-2">
+                            <div class="card-header bg-light" id="headingOne" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                <h5 class="mb-0 d-flex justify-content-center">
+                                    List chapters
+                                </h5>
+                            </div>
+
+                            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordion">
+                                @if (Model.Chapters.Count <= 0)
+                                {
+                                    <div class="row card-body d-flex justify-content-center">
+                                        <span class="h4">List chapters are updating!</span>
+                                    </div>
+                                }
+                                else
+                                {
+                                    @*<div class="table-striped mr-0" style="height:200px; overflow:scroll; overflow-x: hidden;">
+                                        @foreach (var item in Model.Chapters)
+                                        {
+                                            <div class="align-items-center row pl-4 mb-1" style="border: 1px solid #888; border-radius: 2px">
+                                                <div class="col-2 h6"><span>Chapter</span> @Html.DisplayFor(modelItem => item.ChapterNumber)</div>
+                                                <div class="col-10 chapter-header">@Html.ActionLink(item.ChapterHeader, "Details", "Chapters", new { id = item.Id }, new { @class = "nav-link" })</div>
+                                            </div>
+                                        }
+                                    </div>*@
+                                    @Html.Action("ChaptersForStory", "Chapters", new { storyId = Model.Id, Url = ViewBag.Path })
+
+                                }
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header bg-light" id="headingTwo" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                <h5 class="mb-0  d-flex justify-content-center align-items-center">
+                                    Show comments
+                                </h5>
+                            </div>
+                            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+                                <div class="row card-body mr-0" style="height:400px;overflow:scroll; overflow-x: hidden;">
+                                    @Html.Action("GetCommentsForStory", "Comments", new { storyId = Model.Id })
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr />
+
+                <div class="row h4 d-flex justify-content-center mt-3" style="text-align: center">
+                    <span>Enter your comment below</span>
+                </div>
+                <div class="row mr-1 mt-1">
+                    @using (Html.BeginForm("Create", "Comments", FormMethod.Post, new { onsubmit = "return VerifyRating()", @class = "bg-light p-2" }))
+                    {
+                        <div class="d-flex flex-row align-items-start justify-content-between mb-2">
+                            <input name="CommentHeader" required value="" style="width: 62%" class="ml-1 form-control shadow-none" /><span class="text-danger">(*)</span>
+                            <div onmouseout="CRateSelected()" class="text-right">
+                                <span id="span1" onmouseout="CRateOut(1)" onmouseover="CRateOver(1)" onclick="CRateClick(1)" class="far fa-star"></span>
+                                <span id="span2" onmouseout="CRateOut(2)" onmouseover="CRateOver(2)" onclick="CRateClick(2)" class="far fa-star"></span>
+                                <span id="span3" onmouseout="CRateOut(3)" onmouseover="CRateOver(3)" onclick="CRateClick(3)" class="far fa-star"></span>
+                                <span id="span4" onmouseout="CRateOut(4)" onmouseover="CRateOver(4)" onclick="CRateClick(4)" class="far fa-star"></span>
+                                <span id="span5" onmouseout="CRateOut(5)" onmouseover="CRateOver(5)" onclick="CRateClick(5)" class="far fa-star"></span>
+                            </div>
+                        </div>
+                        <textarea class="form-control ml-1 shadow-none textarea" rows="6" cols="50" name="CommentText" id="txtComment"></textarea>
+                        <div>
+                            <input type="hidden" name="rating" id="lblRating" value="0" />
+                            <input type="hidden" name="storyId" value="@Model.Id" />
+                            <input type="hidden" name="Url" value="@ViewBag.Url" />
+                        </div>
+                        <div class="mt-2 text-right">
+                            <input type="submit" class="btn btn-primary btn-sm shadow-none" name="SaveComment" value="Comment" />
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="col-sm-3 card-header bg-light" style="border-left:10px double #27ae2f; border-radius: 28px; max-height: 1000px">
+                @Html.Partial("~/Views/Shared/_Category.cshtml")
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script>
+        function CRateOut(rating) {
+            for (var i = 1; i <= rating; i++) {
+                $("#span" + i).attr('class', 'far fa-star');
+            }
+        }
+
+        function CRateOver(rating) {
+            for (var i = 1; i <= rating; i++) {
+                $("#span" + i).attr('class', 'fas fa-star text-warning');
+            }
+        }
+
+        function CRateClick(rating) {
+            $("#lblRating").val(rating);
+            for (var i = 1; i <= rating; i++) {
+                $("#span" + i).attr('class', 'fas fa-star text-warning');
+            }
+
+            for (var i = rating + 1; i <= 5; i++) {
+                $("#span" + i).attr('class', 'far fa-star');
+            }
+        }
+
+        function CRateSelected() {
+            var rating = $("#lblRating").val();
+            for (var i = 1; i <= rating; i++) {
+                $("#span" + i).attr('class', 'fas fa-star text-warning');
+            }
+        }
+
+        function VerifyRating() {
+            var rating = $("#lblRating").val();
+            if (rating == "0") {
+                alert("Please select rating");
+                return false;
+            }
+            else if (Request.IsAuthenticated) {
+                alert("Your comment is being processed!");
+            }
+        }
+    </script>
+}
+
+<style>
+    .wrap-comment {
+        border-bottom: 1px solid #888;
+    }
+    .date {
+        font-size: 11px
+    }
+
+    .comment-text {
+        font-size: 12px
+    }
+
+    .fs-12 {
+        font-size: 12px
+    }
+
+    .shadow-none {
+        box-shadow: none
+    }
+
+    .name {
+        color: #007bff
+    }
+
+    .cursor:hover {
+        color: blue
+    }
+
+    .cursor {
+        cursor: pointer
+    }
+
+    .textarea {
+        resize: none
+    }
+
+    .bg-light {
+        width: 100%;
+    }
+
+    .story-description {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: normal;
+        -webkit-line-clamp: 8;
+        line-height: 1.6rem;
+        text-align: justify;
+    }
+
+    .chapter-header {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: normal;
+        -webkit-line-clamp: 1;
+        line-height: 1.6rem;
+        text-align: justify;
+    }
+</style>

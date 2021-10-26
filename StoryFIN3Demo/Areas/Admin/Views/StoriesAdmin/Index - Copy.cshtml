@@ -1,0 +1,202 @@
+﻿@model IEnumerable<DemoFIN3.Core.Models.Story>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<div class="card mb-4 mt-2">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <div class="text-uppercase">
+            <i class="fas fa-table me-1"></i>
+            Story
+        </div>
+        <div class="breadcrumb">
+            @Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-primary" })
+        </div>
+    </div>
+    <div class="card-body">
+        <table id="datatablesSimple">
+            <thead>
+                <tr>
+                    <th>Author @Html.DisplayNameFor(model => model.Author.Name)</th>
+                    <th>Category @Html.DisplayNameFor(model => model.Category.Name)</th>
+                    <th>@Html.DisplayNameFor(model => model.Title)</th>
+                    <th>@Html.DisplayNameFor(model => model.PostedOn)</th>
+                    <th>@Html.DisplayNameFor(model => model.StoryStatus)</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Author.Name)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Category.Name)
+                        </td>
+                        <td class="col-3">
+                            @Html.DisplayFor(modelItem => item.Title)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.PostedOn)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.StoryStatus)
+                        </td>
+                        <td class="col-3">
+                            <button data-id="@item.Id" id="btn-edit" class="btn btn-success">Edit</button>
+                            <button data-id="@item.Id" id="btn-details" class="btn btn-secondary">Details</button>
+                            <button class="btn btn-danger btn-delete" onclick="deleteFunc(this)" data-name="@item.Title" data-id="@item.Id">Delete</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Are you want to delete this story?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="closeFunc()">Close</button>
+                <button type="button" class="btn btn-danger" id="btn-delete-modal">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenterConfirm" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" onclick="closeFunc()">Close</button>
+                <button type="button" class="btn btn-primary" id="btn-reload-modal">Reload</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script type="text/javascript">
+        function closeFunc() {
+            $('#exampleModalCenter').modal('hide');
+            $('#exampleModalCenterConfirm').modal('hide');
+        }
+
+        function deleteFunc(e) {
+            let id = e.getAttribute('data-id');
+            let name = e.getAttribute('data-name');
+            $('#btn-delete-modal').data('id', id);
+            $('#exampleModalCenter').modal('show');
+            $('#exampleModalLongTitle').text(name);
+        }
+
+        var showToast = (type = "success", message = "Test") => {
+            toastr.options = {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": true,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": true,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "5000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            };
+            toastr[type](message);
+        }
+
+        $(document).ready(function () {
+            $('#btn-delete-modal').on('click', function () {
+                let id = $(this).data('id');
+                jQuery.ajax({
+                    url: '/Admin/StoriesAdmin/DeleteLogic',
+                    method: 'Post',
+                    data: { id },
+                    success: function (res) {
+                        $('#exampleModalCenter').modal('hide');
+                        if (res.code === 500) {
+                            $('#exampleModalCenterConfirm').modal('show');
+                            $('.modal-body').text("Data has been changed. Do you want to reload page?");
+                        }
+                        else {
+                            showToast("success", res.Message);
+                            setTimeout(function () {
+                            window.location.href = "@Url.Action("Index", "StoriesAdmin")";
+                            }, 3000);
+                        }
+                    },
+                    error: function (j, e) {
+                        showToast("error", e.Message);
+                    },
+                })
+            })
+
+            $(document).on('click', '#btn-edit', function (e) {
+                let id = $(this).data('id');
+                jQuery.ajax({
+                    url: "@Url.Action("CheckExist", "StoriesAdmin")",
+                    type: "Get",
+                    data: { id },
+                    success: function (res) {
+                        if (res.status) {
+                            window.location.href = "/Admin/StoriesAdmin/Edit/" + id;
+                        }
+                        else {
+                            $('#exampleModalCenterConfirm').modal('show');
+                            $('.modal-body').text("Data has been changed. Do you want to reload page?");
+                        }
+                    }
+                })
+            })
+
+            $(document).on('click', '#btn-details', function (e) {
+                let id = $(this).data('id');
+                jQuery.ajax({
+                    url: "@Url.Action("CheckExist", "StoriesAdmin")",
+                    type: "Get",
+                    data: { id },
+                    success: function (res) {
+                        if (res.status) {
+                            window.location.href = "/Admin/StoriesAdmin/Details/" + id;
+                        }
+                        else {
+                            $('#exampleModalCenterConfirm').modal('show');
+                            $('.modal-body').text("Data has been changed. Do you want to reload page?");
+                        }
+                    }
+                })
+            })
+
+            $('#btn-reload-modal').on('click', function () {
+                window.location.href = "@Url.Action("Index", "StoriesAdmin")";
+            })
+
+        })
+    </script>
+
+}
